@@ -1,0 +1,121 @@
+1. What UART stands for ?
+
+	Universal Asynchronous Receiver/Transmitter
+
+2. What problem it solves ?
+
+	It is a hardware communicatin protocol used for serial data transfer between 2 devices 
+	It is called asynchronous because there is no shared clock - both device agree on a baud rate beforehand.
+
+3. How data is transmitted ?
+
+	Data is sent bit by bit in a frame 
+
+	Typical UART frame : 
+
+		1. start bit (logic 0) :- tells receiver data is coming 
+		2. Data bits (Usually 8)
+		3. Optional parity bit - error checking 
+		4. Stop bit(s) (logic 1) - marks end of frame 
+
+	UART uses only 2 main wires 
+
+		Tx (Transmit)
+		Rx (Receive)
+
+4. Why does UART need a baud rate, and what happens if Tx and Rx baud rates don't match ?
+
+	UART is asynchronous, so it does not use a shared clock.
+	So both tx and rx must be configured with the same baud rate, which defines how fast bit are sent.
+	The receiver uses this baud rate to sample incoming bits at the correct time. 
+
+	If the baud rates do not match, the receiver sample at the wrong moments, causing incorrect bit values, framing errors, or completely corrupted data.
+
+
+5. Explain UART frame format. What are start bit, data bits, parity bit, and stop bit ?
+
+	Consist of start bit 
+	5 - 8 data bits 
+	optional parity bit
+	1 or 2 bits 
+
+	start bit signals frame beginning
+	parity provides error checking 
+	stop bit marks frame end 
+	
+	Common format is 8N1
+
+6. What is parity in UART ? What types of parity are available, and why is it used ?
+
+	Parity in UART is a simple error detection mechanism. 
+	A parity bit is added after the data bits 
+	In even parity, the parity bit is set to the totals number of 1s (data + parity) is even
+	In odd parity, it is set so the total no.of 1s becomes odd
+	The receiver recalculates parity and compares it with the received parity bit. If they don;t match, a parity error is detected
+	UART can also be configured with no parity. parity only detects single bit errors and doesn't correct data 
+
+	Even Parity : parity bit = 0
+	Odd  Parity : parity bit = 1
+
+7. What is differencec between UART, SPI, and I2C ?
+
+	| Feature    | UART         | I2C          | SPI                       |
+	| ---------- | ------------ | ------------ | ------------------------- |
+	| Wires      | 2 (TX, RX)   | 2 (SDA, SCL) | 4+ (MOSI, MISO, SCLK, CS) |
+	| Clock      | No           | Yes          | Yes                       |
+	| Topology   | Peer-to-peer | Master/Slave | Master/Slave              |
+	| Speed      | Medium       | Low–Medium   | High                      |
+	| Devices    | 2            | Multiple     | Multiple                  |
+	| Complexity | Simple       | Medium       | Higher                    |
+
+8. Can UART communicate full duplex?
+
+	Yes, UART can communicate in full duplex mode, meaning it can transmit and receive data simultaneously using seperate transmit (TX) and receive (RX) lines. 
+
+9. What is idle state of UART line ?
+
+	Idle state of UART line is when no data is being transmitted. In this state both the Tx and Rx lines are held at a high voltage level, typicall logic high (1) or Vcc.
+
+10. What happens if baud rates mismatch?
+
+	* Data corruption
+	* Framing errors 
+	* Loss of synchronization 
+	* Overrun or Underrun Errors
+	* Communication failures 
+
+11. What is framing error ?
+
+	A framing error occurs when the receiver fails to recognize the correct boundaries of a UART data frame, often due to timing issues like mismatched baud rates or poor signal quality. 
+
+12. What is parity error?
+
+	In UART communication, the parity error typically occurs when the receiver detects a mismatch between the expected and actual parity of the received data frame. If a parity bit error occurs, the receiver flags it and may either discard the frame or request a retransmission, depending on the protocol and configuration.
+
+13.   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		

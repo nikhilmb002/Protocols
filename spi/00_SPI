@@ -3,92 +3,147 @@ Serial Peripheral Interface SPI Protocol
 
 * SPI protocol was designed by Motorola before I2C on board communication for short distance communication (within 9 ft range)
 
+		If master and slave are on the same board it is called as on board 
+
 * SPI designed for mutli slave communication
 
-Features of SPI Protocol
+		
+Real Time Applications / Projects of using SPI
+==============================================
+
+	1. Mobile phone's
+	2. Laptops / Desktops
+	3. Smartwatches 
+	4. Infotainment system of the CAR 
+	5. Cameras
+	6. MP3 players
+
+	
+List of SPI slaves
+==================
+
+	1. External ADC's
+	2. External EEPROM's
+	3. Micro SD cards (not present in I2C protocol)
+	4. External CAN controllers
+	5. Sensors
+	6. Touch screen displays
+
+
+	In the SPI hardware setup master is mandatory 
+	
+	Master only can start the communication not the slave 
+
+	
+
+Features of SPI Protocol 
 ========================
 
-* SPI is 4 wired communication protocol
+	1. SPI was designed by Motorola in the mid 1980s
 
-* SPI is 4 wired communication protocol
+	2. SPI is 4 wired communication protocol 
 
-	- MISO  (Master in slave out)	
-	- MOSI  (Master out, slave in)
-	- CLK   (clock)
+		1. Master in, slave out [send/write]
+		2. Master out, slave in [receive/read]
+		3. Serial clock (CLK/SCLK)
+		4. Chip select / slave select (CS/SS)
 	
-	- CS/SS (Chip select/Slave select)
+		 To communicate with a slave, the master deselects all other slaves, selects the target slave (CS = 0), performs read/write, and then deselects it (CS = 1)
 
- 
-
-	           
-         ---------                 ----------
-         |       |                 |        |
-         |   CLK |  -------------> |  CLK   |
-         |  MOSI | <-------------  |  MOSI  |
-         |  MISO |  -------------> |  MISO  |
-         |   CS  |  -------------> |   CS   |
-         ---------                 ----------
-	   Master		     Slave
-	 (any mc)		    (EEPROM)
-
-* Master use clk for synchronization
-
-* SPI devices dont have any slave address, when ever the slave want to commnicate with master then master can enable the chip select pin by 0
-
-* CS 0 : Enabled
-  CS 1 : Disabled
-
-  until clearing the CS pin slave will not respond 
-
-* The 4 pins are called as SPI bus
-
-* SPI is full-duplex, synchronous serial communication protocol
-
-* SPI is multi slave communication protocol
-
-* Maximum no.of slaves that are connected on the SPI bus is restricted by hardware 
-
-* Speed of the SPI protocol is upto 10 Mbps 
-
-* Data transfer direction is from MSB or LSB first
-
-* SPI works in 4 different modes & these modes are depends on two parameters
 	
-	- Clock polarity (CPOL)
-	- Clock Phase (CPHA)
+	3. SPI is full duplex, synchronous, serial communication protocol 
 
-CPOL
-====
+		In SPI full duplex communication occurs in every clock pulse. which means when one clock pulse is generated master will send 1 bit information to slave and master receives 1 bit information from slave. 
 
-* Clock Polarity represents base value of the clock
+	4. SPI is multi slave communication protocol 
 
-CPHA
-====
+		in I2C protocol we cannot connect ADC, ADC, ADC its like having same ID.
+		but in I2C we can 
 
-* CPHA represents at what edge data has to be sampled (read)
- 
-	  0     1    
-CLK = 0; ______/‾‾‾‾\______/‾‾‾‾\______/‾‾‾‾\_____
+	5. Maximum no.of slaves that can be connected on the SPI bus, are restricted by the hardware
+
+		Number of SPI slaves = Number of CS pins provided by master
+
+	6. Speed of communication 
+
+		SPI does not define any speed limit; implementations often reach over 10 Mbps
+
+	7. Acknowledgement is not supported by the SPI 
+
+	8. Direction of data transmission can be MSB first or LSB first 
+
+		In I2C => [1 byte] Ack [1 byte] Ack [1 byte]	// MASTER will know data has been reached
+		
+		In SPI => [1 byte] [1 byte] [1 byte]	// MASTER won't know if the data have been received 
+
+		In SPI protocol the programming changes from slave to slave 
+	
+	9. SPI has 4 modes of operations and modes are dependent on the 2 parameters
+
+		1. clock phase (CPHA)
+		2. clock polarity (CPOL)
+
+		* Clock phase represents at which edge (rising/falling) data reading (sampling) takes place 
+		
+		* Clock polarity represents base value of the clock (starting value)
+
+		
+		
+		 Base value => idle state 0 & active state 1
+
+		 ^                                   idle
+		 |                                      ^  1
+			 _______                        | _____   _____   _____
+		 0      /       \                       0 |   |   |   |   |   |
+		clk ___/         \___                   __|   |___|   |___|   |__4
 
 
-CLK = 1;   1    0 
-	 ‾‾‾‾\______/‾‾‾‾\______/‾‾‾‾\______/‾‾‾‾
 
 
-No Acknowledgement in the SPI 
+		     Base value => idle state 1 & active state 0
+		     ^
+		     |
+		     1                                  1 (idle)
+		clk ___           ___                  ___    _____   _____   __
+		       \         /                        |   |   |   |   |   |
+			\_______/                         |___|   |___|   |___|
 
-In I2C acknowledgment is there, if the received bits are corrupted then also it will generate acknowledgment
-
-for example in I2C for every bytes of data master is checking acknowledgment so the master need 1 clock pulse for every 1 byte that also can saved by no acknowledgment
-
-If ack not used master can send more data bits in a given unit of time.
-
-This increase the throughput
-
+							    0 (active)
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
 
 
 

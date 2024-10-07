@@ -1,0 +1,108 @@
+            MASTER
+        +--------------+
+MOSI ---+--------------+-------------------> S1,S2,S3
+MISO <--+--------------+<------------------- S1,S2,S3
+SCLK ---+--------------+-------------------> S1,S2,S3
+CS1 ----+----------------------------------> S1
+CS2 ----+----------------------------------> S2
+CS3 ----+----------------------------------> S3
+        +--------------+
+
+	• MOSI, MISO, SCLK → common lines
+	• Each slave has separate CS
+	• Only ONE CS LOW at a time
+		
+
+	When both the slaves are turned on at the same time data collision occurs and the data gets corrupted
+                                                                         _
+        If we want more slaves we just need to increase the chip select (CS) pin, present on the master
+
+
+
+Working of SPI Protocol
+-----------------------
+
+
+        Data ------------> [                ] ---------> SPI slave
+                           [ shift register ]               |
+         temp <----------  [     (8 bit)    ] --------------|
+
+
+                In UART we have 2 buffer, here we have only 1 buffer in SPI
+
+
+Circular Buffer in SPI 
+----------------------
+
+	* The slave comes with predefined 8 bit shift register 
+
+	* Consider master shift reg has all bits 1 and all the bits in slave shift reg have 0
+	 
+	     |---[ 1 1 1 1 1 1 1 1 ] ----------->------- [ 0 0 0 0 0 0 0 0 ] --->--
+	     |	   shift reg	    mosi	      mosi	shift reg	  |	
+	     |									  |
+             |		flag[ ]							  |
+	     --------------------------------<------------------------------------|	
+	
+	* When master creates first clock pulse master will right shift one bit to slave & slave will right shift one bit and sends to master 
+
+		 |---[ 0 1 1 1 1 1 1 1 ] ----------->------- [ 1 0 0 0 0 0 0 0 ] --->--
+	         |     shift reg        mosi              mosi      shift reg         |
+                 |                                                                    |
+                 |          flag[ ]                                                   |
+                 --------------------------------<------------------------------------|
+	
+	* When 8 clock pulses is completed, the master and slave gets swapped
+	                                            _                           _
+	* After the data transfers is completed the CS pin will be delselected (CS = 1)
+
+	* The slave will always give the new data after every 8 clock pulse 
+	
+	* If flag = set, means data transfer is completed 
+
+
+	Program:- 
+
+		SPIDATA = data;	// data from M to S 
+		while (flag == 0);
+		temp = SPIDATA; // data from S to M 
+
+	
+	* When data is assigned to SPIDATA only the clock pulse generation start (automatic)
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

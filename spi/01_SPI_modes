@@ -1,0 +1,113 @@
+What SPI modes really mean ?
+
+	SPI modes are decided by 2 bits : 
+
+		CPOL -> clock polarity (idle level of clock)
+		CPHA -> clock phase (when data is sampled)
+
+		
+	Rule 1 - CPOL (Idle clock level)
+
+		CPOL = 0 -> Clock idles Low 
+		CPOL = 1 -> Clock idles High
+
+		So just look at the clock when nothing is happening 
+
+	Rule 2 - CPHA (which edges read data)
+
+		CPHA = 0 -> sample on first edge 
+		CPHA = 1 -> sample on second edge 
+
+		First edge = first transition after CS goes low 
+
+	All 4 SPI modes 
+
+		Mode | CPOL | CPHA | Clock Idle | Data Sample
+		---------------------------------------------
+		 0   |  0   |  0   | LOW        | Rising edge
+		 1   |  0   |  1   | LOW        | Falling edge
+		 2   |  1   |  0   | HIGH       | Falling edge
+		 3   |  1   |  1   | HIGH       | Rising edge
+
+
+SPI Modes
+---------
+
+Mode 0 :
+
+        CPOL : 0
+        CPHA : 0
+
+        * Master and slave will read/sample data on the rising edge
+        * Data transmission takes place in falling edge
+        * Master can send 1 bit info using 1 clock pulse
+        * In the SPI, a full duplex communication occurs in every clock pulse
+	* When the clock line is 0 slave will not read data from the MOSI pin
+	* If master changing the clock voltage from 0 to +3.3V, a rising edge is detected and slave will read 1 bit information from MOSI pin and, slave will write 1 bit information on the MISO pin and master will read from the MISO pin.
+
+	      _____
+	     /		
+	____/ 			slave will sample 1 bit data from MOSI 
+				Master will sample 1 bit data frame MISO 
+
+	* When falling edge is detected slave will understand now master will send the next data bit 
+	* Only in the rising edge data will be transmitted
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,93 @@
+SPI Registers
+-------------
+
+	SPI0 
+
+		* S0SPCR
+		* S0SPCCR
+		* S0SPDR
+		* S0SPSR
+	
+
+Is it possible for SPI protocol to communicate with 2 masters or controllers ?
+
+	microcontroller to microcontroller not possible using SPI protocol 
+
+	The solution is to make one microcontroller as master and the other microcontroller as slave 
+
+
+
+SPI Control Register (S0SPCR)
+-----------------------------
+            
+	   7 	  6 	 5 	4	3	2	   1	     0
+	[ SPIE | LSBF | MSTR | CPOL | CPHA | Reserved | Reserved | Reserved ]
+
+	MSTR :- Master mode select 
+	LSBF :- LSB first control 	
+	SPIE :- Serial peripheral interrupt enable 
+
+	MSTR : 0 => (SPI Operates in slave mode)
+	MSTR : 1 => (SPI operates in master mode)
+
+	LSBF :- 1 => SPI data is transferred LSB first
+	LSBF :- 0 => SPI data is transferred MSB first 
+
+
+	Slave comes with predefined features, we need to set same settings with the master 
+
+
+SPI Clock Counter Register (S0SPCCR)
+-----------------------------------
+
+	This register controls the frequency of a masters SCK (clock pin)
+
+	31		8  7		               0 	
+        [   Reserved     ] [ SPIO clock counter setting]
+
+		
+	SPI speed = pclk / S0SPCRR
+
+	S0SPCCR = 15; 	// SPIO freq is 1 Mbps 
+	S0SPCCR = 150; 	// SPIO freq is 100 kbps 
+
+
+SPI Data Register (S0SPDR)
+--------------------------
+
+	* This is shift register of SPI0 (SPI Master)
+	* Size is 1 byte and it is bi-directional
+	* Master transmitted data must be written to this reg, then only SPI transfer will start
+	* Master received data (slave transmitted data) can be read from this reg when the flag is set
+
+
+SPI Status Register (S0SPSR)
+----------------------------
+
+	   7 	  6 	 5 	4      3	2	   1 	      0 
+	[ SPIF | WCOL | ROVR | MODF | ABRT | Reserved | Reserved | Reserved ]
+
+	SPIF :- SPI transfer complete flag
+	WCOL :- Write collision 
+	ROVR :- Read Overrun 
+	MODF :- Mode fault
+	ABRT :- Slave Abort 
+
+	SPIF :- SPI data transfer complete flag, when 1 this indicates spi data transfer is complete
+	
+	Before Finishing the first 1 byte transfer, if the new data is assigned to S0SPDR Reg then write collision occurs 
+
+						  _	
+	Before completing the SPI transfer it the CS pin becomes 1 then ABRT bit will set and is called as slave abort.
+
+	If the data of the first transfer is overwritten by the second data transfer then ROVR will set
+
+	Mode fault : Occurs when the case of multi master communication (both are master)
+
+
+
+
+
+
+
+
