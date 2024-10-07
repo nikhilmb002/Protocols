@@ -1,0 +1,150 @@
+I2C Data Frames 
+---------------
+
+1. Byte Write Frame 
+
+	This frame is used to write 1 byte data from master to slave 
+
+2. Byte Read Frame 
+
+	This frame is used to read 1 byte data from slave to master 
+
+
+
+I2C Byte Write Frame 
+--------------------
+		
+        1 bit 	8 bits    1 bit    8 bits    1 bit   8 bits   1 bit   1 bit
+	[ S ] [ SA + W ] [ ACK ] [ Mr Addr ] [ ACK ] [ Data ] [ Ack ] [ P ]
+
+	S -> start condition 
+
+	SA + W -> Slave Addr + option 
+
+	ACK -> 1 bit ack from slave 
+
+	Mr Addr -> Memory address (1 byte) where data write takes place 
+
+	Data -> Data (1 byte) to be written in the given mr address
+
+	P -> stop condition
+
+
+I2C Byte Read Frame / Random Read Frame
+---------------------------------------
+
+	[S] [SA+W] [ACK] [Mr addr] [ACK] [RS] [SA+R] [ACK] [Data Read] [NACK] [P]
+
+	|<---------Dummy write-------->|	
+
+	S :- Start condition 
+	
+	SA + W :- Slave address + write option 
+	
+	Mr Addr :- Memory address from which reads takes plaace 
+
+	RS :- Restart condition / start again 
+	
+	NACK :- No acknowledgement 
+	
+	P :- Stop condition 
+
+	SA + R :- Slave address + Read option 
+
+
+Idle condition of I2C Bus 
+-------------------------
+	    ________________________
+	    |			   |
+	+---|---+		+--|----------------------------+
+	|  'A'  | 		|  v    			|
+	| 	|		| +---+		     +------+ 63|
+	| I2C   |		| | A |----------|   |------|	|
+        | master|		| +---+		 |   |------|	|	
+	|	| 1 (idle cond)	|  temp reg	 |   |------|	|
+	| 0xB0	|<------------->|		 |_  |------|	|
+	|(SA+W) |    I2C Bus	|		---> |  A   | 2	|
+	|	|		|		|    |------| 1	|
+	| 0x2	|		| +-----+	|    |------| 0 |	
+	|(Mem 	|		| | 0x2	|--------     memory	|
+	| addr) |		| +-----+			|
+	+-------+		+-------------------------------+
+			
+					I2C Slave (SA : 0xB0)
+
+	
+	* In I2C protocol default value of I2C bus is '1' when the master and slave is not communicating. 
+
+	* Start Condition :- Will change the idle condition of the I2C bus to signal the i2c slave.
+
+	* After the START condition, the master sends the slave address, and all slaves listen to the bus; only the slave whose address matches will respond.
+
+	* The slave will store the received slave address into temp register and after that it will compare it with its own address. If it is matched the slave will produce ack bit.
+
+		If not present no ack 
+
+	* After ACK master has to send memory address 
+
+	* If this memory address is available in the memory then only the slave will produce the acknowledgment bit
+
+	* After this the master has to send stop condition (I2C Bus becomes idle) 
+
+	* Here we are providing 0x2 as address & if we write a data into it the address counter will automatically increment (like file ptr).
+
+	
+	S -> SA + W -> A -> Memory Addr -> A -> Data -> A -> P 
+		|		|		 |
+		|		|		 |
+		v		v		 v
+	     (to select the	(to select the 	   ( to store data in the 
+		slave for 	   memory addr to	given memory address)
+		communication)		write data)
+
+		
+
+I2C Read Frame 
+--------------
+
+Dummy write (Register address write) : 
+
+	* Used to set the slave's internal address pointer 
+	* No data is written to memory 
+	* Required before a read operation 
+
+	Random read : 
+
+		* Allows reading from any memory / register location 
+		* Implemented using dummy write + repeated START + read 
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+

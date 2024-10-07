@@ -1,0 +1,213 @@
+* Compared to SPI, I2C hardware setup is simple as only 2 lines are used.
+
+* Every I2C slave will have its own slave address and internal memory.
+
+
+
+                               I2C SLAVE
+
+			+----------------------------------+
+       Master		|				   |
+       ------		| +-----------------+	+---+ max  |
+       SA --------------|>|  temp register  |	|   |      |
+         	        | +-----^-----------+	|   |	   |  
+     Data ______________|_______|               |   |      |
+         		|			|   |      |
+	         	|			|   |	   |
+     Memory address ___	|			|   |      |
+		       ||			|   |      |
+		       ||  +-------+            +---+ 0    |
+		       |-> |  0x4  |		memory	   |
+			|  +-------+			   |
+			|  AC pointer			   |
+			|				   |
+			+----------------------------------+
+
+			
+		Max limit depends on slave 
+		
+		Type of memory depends on slave
+
+			EEPROM :- permanent memory 
+			Sensor :- Temporary memory 
+
+			
+	An I2C slave is just a chip that has : 
+
+		an address
+		some internal memory / registers
+		a small pointer that selects which memory location is used 
+
+		master talks to slave in 3 steps
+
+		Step 1 : master selects the slave 
+
+			Master -> SA (slave address)
+		
+			Every I2C slave has its own address 
+
+			When the master sends that address: 
+
+				Only that slave wakes up
+				All other slaves ignore
+
+		Step 2 : Master tells which memory / register 
+
+			Inside the slave there are many small mmeory locations 
+
+				[0] [1] [2] [3] [4] ...
+
+				 The master sends a memory address (example : 0x4)
+
+			This value goes into : 
+
+				AC pointer (Address Counter / Register Pointer)
+
+			So now the slave knows : 
+
+				Okay, master wants location 0x4 
+	
+		Step 3 : Master sends or reads Data 
+
+			 Now master sends data : 
+
+				Master -> Data 
+
+			 The slave stores that data into : 
+
+				Memory [0x4]
+
+			 or if it's a read : 
+
+				Memory [0x4]
+
+
+
+		What are "Temp register" and "AC Pointer" ?
+
+			Temp register : Temporary holding place for data during transfer
+
+			Think of it like a buffer. 
+
+		AC pointer 
+
+			Which memory location is selected
+
+		Example : 
+
+			AC pointer = 0x4
+
+		Means : 
+
+			Use memory [4] 
+
+
+		Why "Max limit depends on slave"?
+
+			Because every chip is different:
+
+				Some slaves have 5 registers
+
+				Some have 100
+
+				Some have thousands
+
+			So memory size depends on device.
+
+	
+		EEPROM vs Sensor 
+
+			EEPROM : Permanent memory 
+
+				Data stays even after power off 
+
+			Sensor : Temporary memory 
+
+				Data disappears when power OFF
+
+				It only holds live values like temperature, pressure, etc.
+
+	
+	
+* Slave Address is actually 7 bit but in programming we should use 8 bit 
+	
+	 7   6   5   4   3   2   1   0
+	[ ] [ ] [ ] [ ] [ ] [ ] [ ] [R/W] 
+                                      |
+				      |------> 0 (write)
+				      |
+				      |------> 1 (read)
+
+	[ 7-bit Slave Address ][ R/W ]
+
+	
+	Example :- 
+
+		lets slave address :- 1011000
+			
+		Write :- 
+
+			1011000 0 
+
+		Read  :- 
+
+			1011000 1 
+
+		Only the last 1 bit changes. 
+
+
+* Slave address is send to the slave by master & slave stores it in the temp reg & slave will compare with its own address
+
+	Where is the slave address stored ?
+
+		Inside the I2C slave hardware - In an internal address register (or address comparator)
+
+		Each I2C slave has : 
+
+			A fixed or programmable slave address register 
+			A Comparator circuit 
+
+			When the master send the address : 
+
+				The received address is placed into a temporary receive reg/ shift reg 
+				
+				Hardware automatically compares it with the slave's own stored address 
+
+				If they match -> slave sends ACK 
+
+				If not -> slave stays silent 
+		
+			This happens entirely in hardware, not software
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

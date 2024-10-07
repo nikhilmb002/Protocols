@@ -1,0 +1,107 @@
+1. When there is multi-master communication, then only arbitration comes into picture.
+
+2. In the I2C arbitration zero is dominant bit and 1 is recessive bit.
+
+3. The master which will write first 0, becomes winner in arbitration.
+
+4. I2C bus is "Wired AND bus"
+
+	Arbitration only works when the 2 masters are sending data at the same time 
+
+5. In the I2C arbitration, each transmitted bit is monitored by I2C bus master
+
+	m1 = 1010 0000 		m2 = 1100 0000
+
+	Here, the 2 masters m1 and m2 have send the first bit "1"
+	
+	The bus voltage now is 3.3v 
+
+	After this both master's m1 & m2 will read the current status of the bus and compare it with the first bit it have send.
+
+	If both are equal, then only the master will continue to send the next bit
+
+	Now m1 and m2 have send 0 and m2 have send 1. Now the bus status is ( 0 & 1 = 0)
+
+	Now the both masters compares the bus status with the bit send, so now here the winner is m1 
+	
+	If one master get lost, arbitration lost condition will connection. The lost master and m2 will wait till the winner master generates the stop condition.
+
+	Atlast the slave will check the received slave address, and only the slave which have same slave address will only produce ACK.
+
+	So the other slaves will wait till the next start condition is generated. 
+
+	
+
+When both masters have same SA
+------------------------------
+
+Eg : M1 : SA + W -> 1010 0000  
+    				 both are winner (arbitration)
+     M2 : SA + W -> 1010 0000
+
+
+     M1 m/r  -> 0000 0001
+				(no arbitration)
+     M2 m/r  -> 0000 0010 	
+	
+     (0000 0001 & 0000 0010) = 0000 0000 (wrong data, no err detection in i2c)
+					 (corrupted m/r address)
+
+     M1 data -> 0100 0001 
+				(no arbitration)
+     M2 data -> 0100 0010 		
+	
+    (0100 0001 & 0100 0010) = 0100 0000 (wrong data, no error detection in i2c)
+					(corrupted data)
+
+
+
+
+     Note 
+     ----
+
+	* When both masters are winner, data gets corrupted as well as memory address gets corrupted.
+
+	* When same data and memory address is sending then no corruption takes place.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

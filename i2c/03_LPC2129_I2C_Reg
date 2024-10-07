@@ -1,0 +1,83 @@
+LPC2129 I2C Registers
+---------------------
+
+1. I2CONSET
+2. I2STAT
+3. I2DAT
+4. I2ADR
+5. I2SCLH
+6. I2SCLL
+7. I2CONCLR 
+
+I2C Bit Frequency Settings
+--------------------------
+
+Software must set values for registers I2SCLH and I2SCLL to select the appropriate data rate.
+
+	Bit frequency = FCLK / (I2SCLL + I2SCLH)
+
+	Where FCLK - Frequency of PCLK 
+
+	Bit frequency = PCLK / (I2SCLL + I2SCLH)
+
+	100 Kbps = 15 MHZ / (I2SCLL + I2SCLH)
+
+	I2SCLL + I2SCLH = 15000000 / 100000 
+
+			I2SCLL = 75; // for 100 Kbps 
+			I2SCLH = 75; // for 100 Kbps 
+
+
+I2C Operating Modes
+-------------------
+
+	1. Master write 
+	2. Master read
+	3. Slave write  	 
+	4. Slave read  
+
+		slave write and slave read are only used in multi master communication 
+
+	
+	
+	+--------------+	+---------------+
+	|      M1      |	|	M2 	|
+	| (Master mode)| 	|  (slave mode)	|
+	+--------------+	+---------------+
+	    	|	    		 |
+	   	|    		   	 |
+	   	|    			 |
+	   	|			 |
+	------------------------------------------- I2C Bus
+		   |		   |
+	           |		   |
+		   |		   |
+	         +----+	         +----+	
+	         | S1 |	         | S2 |
+	         +----+	         +----+
+		  0xA0 	          0xB0
+
+	If M2 is operating in slave mode, it must be assigned a slave address by the programmer so that the master can communicate with it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		

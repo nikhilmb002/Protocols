@@ -1,0 +1,238 @@
+Inter-Integrated Circuit (I2C / IIC / I²C)
+------------------------------------------
+
+* I2C was designed by Philips (now NXP semiconductor) for onboard IC communication 
+
+                |<-------------------------------1 feet----------->
++------------------------------------------------------------+
+|                                                            |
+|                             			             |
+|                                                            |
+|  On-board IC Communication                                 |
+|                                s1	        s3           |
+|   +--------------------+        |		|            |
+|   |     I2C MASTER   m1|------------------------------------------ s4
+|   +--------------------+               |            |      |   (off board
+|					 s2          m2	     |     IC communication)
+|							     |
+|							     |
+|                                                            |
++------------------------------------------------------------+
+
+
+	S1, S2, S3 → On-board Slave Devices
+	M2         → Another On-board Module
+	S4         → Off-board Slave Device
+
+
+* I2C is designed for multislave and multimaster communication
+
+* Designed firstly for TV mother board 
+
+* I2C :- 2 represents no.of pins 
+
+* Master1 & Master2 cannot communicate with 2 slaves at the same time
+
+* Arbitration mechanism :- Will avoid data corruption, as there is a chance both master will send, data at the same time
+
+
+
+Arbitration Mechanism 
+---------------------
+
+* Works on the priority of master 
+
+* Master which have higher priority will send data first, The one with lower priority will wait
+
+* Inbuilt priority setting (user can't change)
+
+
+
+List of I2C slaves
+------------------
+
+1. Real Time Clock (RTC)
+2. EEPROM
+3. Sensors
+4. OLED Display 
+5. ADC 
+6. IO port expander, many more 
+
+
+
+
+Features of I2C Protocol
+------------------------
+
+1. Designed by philips semiconductor and introduced to master since the mid 1990's 
+
+2. Two wired communication protocol
+
+	a) Serial Data  (SDA)				
+	b) Serial Clock (SCL)			   _ Vcc	
+  				    _Vcc	   |
+        +----------------------+    |		   |	+-----------------------+
+        |                      |    R1		   |	|			|
+        |      I2C MASTER      |    |		  R2	|	   I2C slave	|
+        |                  SDA |----|--------------|--->| SDA			|
+        |   		       | 		   |	|			|
+        |                      |		   |	|			|
+        |                  SCL |-------------------|--->| SCL 			|
+        +----------------------+			+-----------------------+
+
+				Hardware setup of I2C 
+
+		R1 and R2 are external pull up resistors, usually (1K-10KΩ)
+
+		SCL :- Used to synchronization
+		SDA :- Used to exchange data 
+
+	All I2C slaves are open-drain slaves 
+	
+	If the external pull up resistors are not connected then the SPI slave can write 0 value but cannot write 1 
+	
+	
+		+-----------+ 0 1 0 1 0  
+		|	SDA |-----------
+		|	    |   _   _
+		|	    | _| |_| |_
+		|	SCL |-----------
+		+-----------+
+			
+		  I2C slave 
+
+
+3. Half duplex, synchronous serial communication protocol 
+
+4. Specifically designed for onboard (intra board) IC communication
+	
+	Note : less than 1 foot (30cm) communication with a connector
+
+5. I2C is multimaster and multi slave communication protocol 
+	
+6. I2C bus master can use 100Kbps (standard), 400 Kbps (fast mode), 1 Mbps (fast mode plus) or 3.4 Mbps (High speed) for communication 
+
+7. Each device connected to the I2C bus has a unique address, known as slave address / device address 
+   The slave address can be 7 bits or 10 bits 
+
+   Limitation 
+   ----------
+
+	* If slaves with same address is connected it will fail 
+	* We cannot connect same type of slaves on the same i2c bus (diff bus we can)
+
+8. ACK based protocol 
+
+	Each byte of data (including the address byte) is followed by 1 ack bit from the receiver 
+	
+	Size of ack bit = 1
+
+9. Data is transferred from MSB first 
+
+10. I2C has an arbitration policy 
+
+
+	Priorities assigned on master 
+	-----------------------------
+
+	M1 = 0000 1010
+	M2 = 0000 0010
+
+	Lets compare bit-by-bit (MSB to LSB)
+
+	| Bit position | M1 | M2 | SDA result | Who wins    |
+	| ------------ | -- | -- | ---------- | ----------- |
+	|       1      | 0  | 0  | 0          | both stay   |
+	|       2      | 0  | 0  | 0          | both stay   |
+	|       3      | 0  | 0  | 0          | both stay   |
+	|       4      | 0  | 0  | 0          | both stay   |
+	|       5      | 1  | 0  | 0          | **M2 wins** |
+
+
+	In I2C, the master that transmits the first dominant 0 while the others transmits 1 become the winner.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
