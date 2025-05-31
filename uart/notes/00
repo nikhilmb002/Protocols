@@ -1,0 +1,461 @@
+what is UART ?
+
+* UART stands for Universal Asynchronous Reciever/Transmitter.
+
+* It is a serial communication protocol used for data exchange between devices (eg: MCU <-> PC)
+
+* UART transmits data serially over a wire, bit by bit
+
+* Data comes from a parallel data bus, converted to serial by the transmitting UART
+
+* Each UART device has 
+	
+	* A TX (Transmit) pin - for sending data
+	* A RX (Recieve) pin - for receiving data
+
+* Baud rate must be the same on both devices to ensure proper commnunication
+
+* Baud rate defines the maximum no.of bits per second (bps) transferred.
+
+* Communication is asynchronous (no clock signal shared)
+
+* The transmitter creates a bitstream using its own internal clock
+
+* The reciever uses its own clock to sample incoming data
+
+* Synchronization is achieved by setting the same baud rate on both devices.
+
+* Mismatched baud rates can lead to incorrect sampling and data errors.
+
+* A baud rate difference of up to 10% is generally tolerable; beyond that, communication becomes unreliable.
+
+
+Key Concepts
+------------
+
+* Tx (Transmit) and RX (Recieve) Pins
+* Baud Rate  : Speed of data transmission (eg: 9600, 115200 bps)
+* Start Bit  : always 0, marks the beginning of frame
+* Data Bits  : typically 8 bits
+* Parity Bit : optional, for error checking
+* Stop Bit   : always 1, marks the end of frame
+
+
+Basic UART Frame
+----------------
+
+| start | Data (8 bits) | parity (opt) | stop |
+|   0	|    10101010	|       _      |   1  |
+
+
+Example
+-------
+
+If you want to send the character 'A' (which is 0x41) or 01000001 in binary the bitstream sent over UART might look like this
+
+start bit | 	Data bits	| stop bit
+
+   0 	  |      10000010	| 1
+
+-> Bitstream : 0100000101
+
+The reciever reads the bitstreama and reassembles it to meaningfule bytes or characters
+
+In UART, data bits are sent LSB first
+
+
+Simple Explanation how transmistter and reciever working
+--------------------------------------------------------
+
+* The receiver doesn't know exactly when each bit is coming, so it uses its own internal clock to check (sampled) the wire at regular intervals.
+
+* To make sure the receiver checks at the right time, both the sender and receiver must agree on how fast the data is sent-this speed is called the baud rate
+
+* If their baud rates are the same, the reciever can correctly read each bit as it arrives.
+
+
+
+UART Packet Transmission
+------------------------
+
+* UART Transmits data in the form of packets
+
+* A packet includes serveral parts that structure the data for proper transmission and reception
+
+* The hardware connection between transmitter and receiver handles
+	
+	* Creating serial packets
+	* Controlling the physical lines (Tx and Rx)
+
+* A Typical UART Packet structure consist of 
+	
+	* Start bit  : indicates the beginning of the data packet
+	 
+	* Data frame : actual data bits (usually 5-8 bits)
+	
+ 	* Parity Bit : for error checking
+	
+	* Stop bits  : indicate the end of the packet (usually 1 or 2)
+
+
+Start bit
+---------
+
+* When idle, the UART transmission line is held at a high voltage level (logic 1).
+
+* To start data transmission, the transmitting UART pulls the line low (logic 0) for one clock cycle - this is the start bit
+
+* The receiving UART detects this high to low transition as beginning of a new data packet.
+
+* After detecting the start bit, the receiver samples the incoming bits at intervals defined by the baud rate.
+
+
+
+How the UART "pulls the line low" to send the start bit ?
+
+When the transmitting UART wants to send data, it manually controls the TX pin (transmit pin) using its internal hardware logic. 
+
+1. Tx Pin is initially high (idle state)
+
+	* When the UART is not transmitting, the Tx pin is kept at a high voltage level (logic 1)
+	
+	* This is the idle or marking state of the UART line
+
+2. Start Bit Transmisssion
+
+To signal the start of a new data frame, the UART hardware:
+	
+	* Forces the Tx pin Low (Logic 0)
+	
+	* Holds it there for one bit period, based on the baud rate
+
+   This low signal is recognized by the receiver as the start bit
+
+3. How the hardware does it 
+
+Internally:
+	
+	* When you write a byte to the UART transmit register (like U0THR on LPC2129)
+	
+	* The UART controller automatically:
+	
+		1. Sends the start bit (pulls Tx low)
+		2. Sends the data bits (LSB first)
+		3. Adds optional parity
+		4. Ends with stop bit(s) (Tx goes high again)
+
+do not manually set or clear the Tx pin in code. The UART hardware takes care of this as part of its built-in operation
+
+visual Example
+-------------
+
+Idle Line:         ───────
+Start Bit:               ┐
+                       ┌─┘ (TX pulled low)
+Data Bits:             █   (LSB first)
+Stop Bit:             ──  (TX goes back high)
+
+
+Data Frame
+----------
+
+* The data frame carries the actual data being transmitted.
+
+* Its length can vary depending on the parity setting:
+	
+	* 5 to 8 bits if a parity bit is used
+	
+	* Up to 9 bits if no parity bit is used
+
+* In most UART implementations, data is sent LSB first.
+
+
+Parity Bit
+----------
+
+* parity checks the evenness or oddness of the number of 1 bits in a data frame.
+
+* The parity bit helps the receiving UART detect errors during transmission.
+
+* Bit errors can occur due to:
+
+	* Electromagnetic interference
+	* Mismatched baud rates
+	* Long distance transmission
+
+How parity works ?
+
+* After receiving the data frame, the UART count the no.of 1 bits.
+
+* it then compares the result with the parity bit
+
+parity bit 0 then expected no.of 1s is even number (even parity)
+parity bit 1 then expected no.od 1s is odd number (odd parity)
+
+
+Stop Bit
+--------
+
+* The stop bit signals the end of data packet
+
+* To indicate this, the sending UART drives the transmission lne.
+
+	From low voltage (logic 0) to high voltage (logic 1)
+
+* The line stays high for 1 or 2 bit durations
+
+UART Data Transmission Process - Step by Step
+---------------------------------------------
+
+1. Parallel Data Reception
+
+	* The transmitting UART receives data in parallel from the system's data bus
+
+2. Frame Formatting
+
+	* The UART adds the necessary framing bits:
+		
+		* start
+		* parity bit (if enabled)
+		* stop bit(s)
+
+3. Serial Transmission:
+	
+	* The complete packet is sent serially, starting from the start bit to the stop bit 
+
+	* The receiving UART samples the incoming data at the configured baud rate.
+
+4. Frame Processing
+	
+	* The receiving UART removes the start, parity, and stop bits, leaving just the data
+
+5. Parallel output
+
+	* The serial data is then converted back into parallel form and placed on the receiver's data bus
+
+
+UART Frame Protocol 
+-------------------
+
+📌 Purpose of frame protocol
+
+ * Enhances security and reliability in UART communication.
+
+ * Helps prevent miscommunication or malfunctions due to mismatched connections or configurations.
+
+ * Requires both transmitting and receiving devices to parse data according to a predefined structure
+
+
+How UART frame protocol prevents miscommunication & malfunctions
+
+1. Unique Headers for Identification
+
+	* Each frame starts with a predefined header (eg: 0xAB, 0xCD) that acts like a device ID or message marker.
+	
+	* If the receiver doesn't detect this header, it ignores the frame, preventing it from random or incorrect data.
+
+	* This prevents cross-device interference - only the intended device responds
+
+
+2. Command and Data structure
+
+	* The frame has a clearly defined structure (Header -> CMD -> Data Length -> Data -> Trailer -> CRC)
+
+	* If the structure doesn't match expectations, the frame is discarded.
+
+	* This avoids interpreting corrupted or misaligned data.
+
+3. Trailers for Frame Completion
+
+	* A trailer (eg: 0xE1 0xE2) signals 
+	
+	* Ensures the receiver doesn't misread extra or leftover bytes as a new frame
+
+	* Protects against buffer overflows and partial transmissions
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
