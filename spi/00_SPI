@@ -1,0 +1,119 @@
+Serial Peripheral Interface SPI Protocol
+========================================
+
+* SPI protocol was designed by Motorola before I2C on board communication for short distance communication (within 9 ft range)
+
+* SPI designed for mutli slave communication
+
+Features of SPI Protocol
+========================
+
+* SPI is 4 wired communication protocol
+
+* SPI is 4 wired communication protocol
+
+	- MISO  (Master in slave out)	
+	- MOSI  (Master out, slave in)
+	- CLK   (clock)
+	
+	- CS/SS (Chip select/Slave select)
+
+ 
+
+	           
+         ---------                 ----------
+         |       |                 |        |
+         |   CLK |  -------------> |  CLK   |
+         |  MOSI | <-------------  |  MOSI  |
+         |  MISO |  -------------> |  MISO  |
+         |   CS  |  -------------> |   CS   |
+         ---------                 ----------
+	   Master		     Slave
+	 (any mc)		    (EEPROM)
+
+* Master use clk for synchronization
+
+* SPI devices dont have any slave address, when ever the slave want to commnicate with master then master can enable the chip select pin by 0
+
+* CS 0 : Enabled
+  CS 1 : Disabled
+
+  until clearing the CS pin slave will not respond 
+
+* The 4 pins are called as SPI bus
+
+* SPI is full-duplex, synchronous serial communication protocol
+
+* SPI is multi slave communication protocol
+
+* Maximum no.of slaves that are connected on the SPI bus is restricted by hardware 
+
+* Speed of the SPI protocol is upto 10 Mbps 
+
+* Data transfer direction is from MSB or LSB first
+
+* SPI works in 4 different modes & these modes are depends on two parameters
+	
+	- Clock polarity (CPOL)
+	- Clock Phase (CPHA)
+
+CPOL
+====
+
+* Clock Polarity represents base value of the clock
+
+CPHA
+====
+
+* CPHA represents at what edge data has to be sampled (read)
+ 
+	  0     1    
+CLK = 0; ______/‾‾‾‾\______/‾‾‾‾\______/‾‾‾‾\_____
+
+
+CLK = 1;   1    0 
+	 ‾‾‾‾\______/‾‾‾‾\______/‾‾‾‾\______/‾‾‾‾
+
+
+No Acknowledgement in the SPI 
+
+In I2C acknowledgment is there, if the received bits are corrupted then also it will generate acknowledgment
+
+for example in I2C for every bytes of data master is checking acknowledgment so the master need 1 clock pulse for every 1 byte that also can saved by no acknowledgment
+
+If ack not used master can send more data bits in a given unit of time.
+
+This increase the throughput
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
