@@ -42,7 +42,7 @@ SPI Clock Counter Register (S0SPCCR)
 
 	This register controls the frequency of a masters SCK (clock pin)
 
-	31		8  7		               0 	
+	    31		         8 7		                   0 	
         [   Reserved     ] [ SPIO clock counter setting]
 
 		
