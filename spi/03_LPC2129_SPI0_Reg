@@ -20,7 +20,7 @@ Is it possible for SPI protocol to communicate with 2 masters or controllers ?
 SPI Control Register (S0SPCR)
 -----------------------------
             
-	   7 	  6 	 5 	4	3	2	   1	     0
+	   7 	  6 	 5   	4	   3	    2	       1	     0
 	[ SPIE | LSBF | MSTR | CPOL | CPHA | Reserved | Reserved | Reserved ]
 
 	MSTR :- Master mode select 
@@ -64,7 +64,7 @@ SPI Data Register (S0SPDR)
 SPI Status Register (S0SPSR)
 ----------------------------
 
-	   7 	  6 	 5 	4      3	2	   1 	      0 
+	   7 	  6 	 5 	     4     3	    2	       1 	      0 
 	[ SPIF | WCOL | ROVR | MODF | ABRT | Reserved | Reserved | Reserved ]
 
 	SPIF :- SPI transfer complete flag
