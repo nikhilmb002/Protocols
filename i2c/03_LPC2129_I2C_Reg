@@ -39,23 +39,23 @@ I2C Operating Modes
 		slave write and slave read are only used in multi master communication 
 
 	
-	
-	+--------------+	+---------------+
-	|      M1      |	|	M2 	|
-	| (Master mode)| 	|  (slave mode)	|
-	+--------------+	+---------------+
-	    	|	    		 |
-	   	|    		   	 |
-	   	|    			 |
-	   	|			 |
-	------------------------------------------- I2C Bus
-		   |		   |
-	           |		   |
-		   |		   |
-	         +----+	         +----+	
-	         | S1 |	         | S2 |
-	         +----+	         +----+
-		  0xA0 	          0xB0
+	    +--------------+        +---------------+
+        |      M1      |        |       M2      |
+        | (Master mode)|        |  (slave mode) |
+        +--------------+        +---------------+
+                |                        |
+                |                        |
+                |                        |
+                |                        |
+        ------------------------------------------- I2C Bus
+                   |               |
+                   |               |
+                   |               |
+                 +----+          +----+
+                 | S1 |          | S2 |
+                 +----+          +----+
+                  0xA0            0xB0
+
 
 	If M2 is operating in slave mode, it must be assigned a slave address by the programmer so that the master can communicate with it.
 
